@@ -1,0 +1,1 @@
+In this Scripts folder some common and daily task related bash scripts are created . Which give us a simple  output .
