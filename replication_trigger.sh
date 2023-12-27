@@ -1,11 +1,11 @@
 #!/bin/bash
 ip=`hostname -I|awk '{print $1}'`
-binfile="mysql"
-uname="BACKUSER"
-pwd="support@"
+binfile="MYSQL "
+uname=""
+pwd=""
 cmd=`$binfile -u$uname -p$pwd  -e "show slave status\G;"`
 if [[ $? -gt 0 ]]; then
-        echo "Not able to connect with MYSQL slave node "$ip |mail -s "Ithuba | Mysql Connection Failed on $ip for Replication Check" dba@skilrock.com monitoring@skilrock.com
+        echo "Not able to connect with MYSQL slave node "$ip |mail -s "Ithuba | Mysql Connection Failed on $ip for Replication Check" ##add email address
 exit
 fi
 sbh=`echo "$cmd" |  grep Seconds_Behind_Master|head -n 1|awk '{print $2}'`
@@ -30,13 +30,13 @@ if [[ $? -eq 0 ]]; then
         slaveio=`echo "$cmd"|grep Slave_IO_Running|head -n 1|awk '{print $2}'`
         slavesql=`echo "$cmd"|grep Slave_SQL_Running|head -n 1|awk '{print $2}'`
         if [[ $slaveio == 'No' || $slavesql == 'No' ]]; then
-                echo "$var"|mail -s "Mysql Replication for $ip is reporting Error" dba@skilrock.com monitoring@skilrock.com
+                echo "$var"|mail -s "Mysql Replication for $ip is reporting Error"  ##add your email
         #sbh=`echo "$cmd" |  grep Seconds_Behind_Master|head -n 1|awk '{print $2}'
         elif [[ $sbh -gt 600 || $sbh == 'NULL' ]]; then
                 echo "prev="$sbh > /home/ctr_support/replicationCheck/data.txt
-                echo "$var"|mail -s "Mysql Replication Reporting Delay for $ip" dba@skilrock.com monitoring@skilrock.com
+                echo "$var"|mail -s "Mysql Replication Reporting Delay for $ip"  ##add your email
         elif [[ $prev -gt '200'  &&  $current == '0' ]]; then
-                echo "$var"|mail -s "Resolved : Ithuba | Mysql Replication Reporting Delay for $ip" dba@skilrock.com monitoring@skilrock.com
+                echo "$var"|mail -s "Resolved : Ithuba | Mysql Replication Reporting Delay for $ip"  ##email 
         else
                 >/home/ctr_support/replicationCheck/data.txt
                 echo "prev="$current > /home/ctr_support/replicationCheck/data.txt
